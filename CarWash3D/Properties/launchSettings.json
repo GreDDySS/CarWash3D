@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CarWash3D": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
