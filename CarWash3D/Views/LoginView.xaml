@@ -1,0 +1,99 @@
+﻿<Page x:Class="CarWash3D.Views.LoginView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d" 
+      d:DesignHeight="550" d:DesignWidth="400"
+      Title="LoginView">
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Page.Resources>
+    <Grid Background="White">
+        <Border BorderThickness="0" Margin="20">
+            <StackPanel>
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="🚘 АвтоМойка" Foreground="#4169E1" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                    <TextBlock Text="Вход в систему" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Выберите тип учетной записи и введите данные для входа" FontSize="14" Foreground="#646464" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                </StackPanel>
+
+                <Grid Height="40" Margin="0,10,0,20" x:Name="TabsGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.ColumnSpan="2" BorderThickness="0,0,0,1" BorderBrush="#DCDCDC" VerticalAlignment="Bottom"/>
+                    <Button Grid.Column="0" Content="Клиент" FontSize="14" Command="{Binding SwitchToClientCommand}" BorderThickness="0" Background="Transparent" Padding="0,10,0,10">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsClientTabActive}" Value="True">
+                                        <Setter Property="Foreground" Value="#4169E1"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Grid.Column="1" Content="Сотрудник" FontSize="14" Command="{Binding SwitchToEmployeeCommand}" BorderThickness="0" Background="Transparent" Padding="0,10,0,10">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEmployeeTabActive}" Value="True">
+                                        <Setter Property="Foreground" Value="#4169E1"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Border Grid.Column="{Binding ActiveTabIndex}" Height="2" Background="#4169E1" VerticalAlignment="Bottom" x:Name="TabIndicator"/>
+                </Grid>
+
+                <!-- Панель ввода данных клиента -->
+                <StackPanel Visibility="{Binding IsClientPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Номер телефона" Style="{StaticResource InputLabel}"/>
+                    <TextBox Text="{Binding ClientPhone, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}"/>
+                    <TextBlock Text="Номер автомобиля" Style="{StaticResource InputLabel}"/>
+                    <TextBox Text="{Binding ClientCarNumber, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}"/>
+                    <Button Content="Войти как клиент" Style="{StaticResource BlueButton}" Command="{Binding ClientLoginCommand}"/>
+                    <Button Style="{StaticResource NavLinkText}" Command="{Binding NavigateToRegistrationCommand}" Background="Transparent" BorderThickness="0">
+                        <TextBlock>
+                            <Run Text="Еще не зарегистрированы? "/>
+                            <Run Text="Зарегистрироваться" Foreground="#4169E1"/>
+                        </TextBlock>
+                    </Button>
+                </StackPanel>
+
+                <!-- Панель ввода кода -->
+                <StackPanel Visibility="{Binding IsCodeEntryVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Введите код подтверждения" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <TextBlock Text="Мы отправили код из 6 цифр на ваш телефон" FontSize="14" Foreground="#646464" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,20"/>
+                    <TextBox Text="{Binding VerificationCode, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource InputTextBox}" 
+                         MaxLength="6" 
+                         HorizontalAlignment="Center" 
+                         Width="120" 
+                         PreviewTextInput="NumberValidationTextBox"/>
+                    <Button Content="Подтвердить" Style="{StaticResource BlueButton}" Command="{Binding VerifyCodeCommand}"/>
+                </StackPanel>
+
+                <!-- Панель входа сотрудника -->
+                <StackPanel Visibility="{Binding IsEmployeePanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Имя пользователя" Style="{StaticResource InputLabel}"/>
+                    <TextBox Text="{Binding EmployeeUsername, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}"/>
+                    <TextBlock Text="Пароль" Style="{StaticResource InputLabel}"/>
+                    <PasswordBox materialDesign:HintAssist.Hint="Пароль" PasswordChanged="PasswordBox_PasswordChanged" Style="{StaticResource InputPasswordBox}"/>
+                    <Button Content="Войти как сотрудник" Style="{StaticResource GreenButton}" Command="{Binding EmployeeLoginCommand}"/>
+                    <TextBlock Text="Забыли пароль? Обратитесь к администратору системы." Margin="0,10,0,0" FontSize="12" HorizontalAlignment="Center" Foreground="#646464"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
