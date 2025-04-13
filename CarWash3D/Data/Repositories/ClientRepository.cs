@@ -6,27 +6,35 @@ namespace CarWash3D.Data.Repositories
 {
     public class ClientRepository
     {
-        private readonly CarWashDbContext _context;
+        private readonly IDbContextFactory<CarWashDbContext> _dbContextFactory;
 
-        public ClientRepository(CarWashDbContext context)
+        public ClientRepository(IDbContextFactory<CarWashDbContext> dbContextFactory)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
         }
 
         public Client GetClientByPhoneAndCarNumber(string phone, string carNumber)
         {
-            return _context.Клиенты.FirstOrDefault(c => c.Номер_телефона == phone && c.Номер_машины == carNumber);
+            using var context = _dbContextFactory.CreateDbContext();
+            return context.Клиенты.FirstOrDefault(c => c.Номер_телефона == phone && c.Номер_машины == carNumber);
+        }
+
+        public Client GetClientByPhone(string phone)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            return context.Клиенты.FirstOrDefault(c => c.Номер_телефона == phone);
         }
 
         public bool AddClient(Client client)
         {
+            using var context = _dbContextFactory.CreateDbContext();
             try
             {
-                _context.Клиенты.Add(client);
-                int result = _context.SaveChanges();
+                context.Клиенты.Add(client);
+                int result = context.SaveChanges();
                 return result > 0; 
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
