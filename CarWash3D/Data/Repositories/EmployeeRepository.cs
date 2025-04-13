@@ -5,16 +5,17 @@ namespace CarWash3D.Data.Repositories
 {
     public class EmployeeRepository
     {
-        private readonly CarWashDbContext _context;
+        private readonly IDbContextFactory<CarWashDbContext> _dbContextFactory;
 
-        public EmployeeRepository(CarWashDbContext context)
+        public EmployeeRepository(IDbContextFactory<CarWashDbContext> dbContextFactory)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
         }
 
-        public Employee GetEmployeeByUsernameAndPassword(string username, string password)
+        public Employee? GetEmployeeByUsernameAndPassword(string username, string password)
         {
-            return _context.Сотрудники.FirstOrDefault(e => e.Логин == username && e.Пароль == password);
+            using var context = _dbContextFactory.CreateDbContext();
+            return context.Сотрудники.FirstOrDefault(e => e.Логин == username && e.Пароль == password);
         }
     }
 }
