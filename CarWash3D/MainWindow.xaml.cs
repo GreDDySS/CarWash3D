@@ -1,32 +1,36 @@
 ﻿using CarWash3D.Data;
-using CarWash3D.Data.Repositories;
 using CarWash3D.Helpers;
 using CarWash3D.Services;
 using CarWash3D.ViewModels;
-using CarWash3D.Views;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace CarWash3D
 {
     public partial class MainWindow : Window
     {
         private readonly NavigationService _navigationService;
+        private readonly IServiceProvider _serviceProvider;
 
-        public MainWindow()
+        public MainWindow(IServiceProvider serviceProvider)
         {
             InitializeComponent();
+            _serviceProvider = serviceProvider;
 
-            // Инициализация базы данных и репозиториев
-            var dbContext = new CarWashDbContext();
-            var clientRepository = new ClientRepository(dbContext);
-            var employeeRepository = new EmployeeRepository(dbContext);
+            // Получаем NavigationService из ServiceProvider
+            _navigationService = _serviceProvider.GetRequiredService<NavigationService>();
 
-            // Инициализация сервисов
-            var clientService = new ClientService(clientRepository);
-            var employeeService = new EmployeeService(employeeRepository);
-            _navigationService = new NavigationService(MainFrame, clientService, employeeService);
+            // Устанавливаем Frame
+            _navigationService.SetFrame(MainFrame);
 
-            DataContext = new MainViewModel(_navigationService);
+            // Настраиваем фабрику CustomerCabinetViewModel
+            var customerCabinetViewModelFactory = _serviceProvider.GetRequiredService<Func<int, CustomerCabinetViewModel>>();
+            _navigationService.UpdateCustomerCabinetViewModelFactory(customerCabinetViewModelFactory);
+
+            // Переходим на начальную страницу
             _navigationService.NavigateTo("LoginView");
         }
     }
