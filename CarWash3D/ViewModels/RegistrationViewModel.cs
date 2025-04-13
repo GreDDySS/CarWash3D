@@ -30,27 +30,55 @@ namespace CarWash3D.ViewModels
 
         private void Register()
         {
-            var parts = FullName.Split(' ');
+            // Валидация ФИО
+            if (string.IsNullOrWhiteSpace(FullName) || !FullName.Contains(" "))
+            {
+                MessageBox.Show("Пожалуйста, введите корректное ФИО (Фамилия Имя Отчество).");
+                return;
+            }
+
+            var nameParts = FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (nameParts.Length < 2 || nameParts.Length > 3)
+            {
+                MessageBox.Show("ФИО должно содержать минимум Фамилию и Имя.");
+                return;
+            }
+
+            // Валидация номера телефона
+            if (string.IsNullOrWhiteSpace(Phone) || !System.Text.RegularExpressions.Regex.IsMatch(Phone, @"^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$"))
+            {
+                MessageBox.Show("Пожалуйста, введите номер телефона в формате +7 (XXX) XXX-XX-XX.");
+                return;
+            }
+
+            // Валидация номера автомобиля
+            if (string.IsNullOrWhiteSpace(CarNumber) || !System.Text.RegularExpressions.Regex.IsMatch(CarNumber, @"^[А-ЯA-Z]\d{3}[А-ЯA-Z]{2}\d{2,3}$"))
+            {
+                MessageBox.Show("Пожалуйста, введите номер автомобиля в формате A123BC45 или A123BC456.");
+                return;
+            }
+
             var client = new Client
             {
-                Фамилия = parts[0],
-                Имя = parts.Length > 1 ? parts[1] : "",
-                Отчество = parts.Length > 2 ? parts[2] : "",
+                Фамилия = nameParts[0],
+                Имя = nameParts[1],
+                Отчество = nameParts.Length > 2 ? nameParts[2] : "",
                 Номер_телефона = Phone,
                 Номер_машины = CarNumber
             };
+
             if (_clientService.RegisterClient(client))
             {
-                MessageBox.Show("Регистрация выполнена успешно!");
+                MessageBox.Show("Регистрация прошла успешно!");
                 _navigationService.NavigateTo("LoginView");
             }
             else
             {
-                MessageBox.Show("Ошибка регистрации. Проверьте данные и повторите попытку.");
+                MessageBox.Show("Ошибка при регистрации. Возможно, такой клиент уже существует.");
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
