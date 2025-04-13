@@ -14,6 +14,7 @@ namespace CarWash3D.ViewModels
         private bool _isClientTabActive = true;
         private int _activeTabIndex = 0;
         private bool _isCodeEntryVisible = false;
+        private string _lastAuthenticatedPhone; // Для хранения номера телефона клиента после запроса кода
 
         public string ClientPhone { get; set; } = "+7 (999) 123-45-67";
         public string ClientCarNumber { get; set; } = "A123BВ777";
@@ -24,20 +25,41 @@ namespace CarWash3D.ViewModels
         public bool IsClientTabActive
         {
             get => _isClientTabActive;
-            set { _isClientTabActive = value; OnPropertyChanged(); }
+            set
+            {
+                _isClientTabActive = value;
+                OnPropertyChanged(nameof(IsClientTabActive));
+                OnPropertyChanged(nameof(IsEmployeeTabActive));
+                OnPropertyChanged(nameof(IsClientPanelVisible));
+                OnPropertyChanged(nameof(IsEmployeePanelVisible));
+            }
         }
+
         public bool IsEmployeeTabActive => !_isClientTabActive;
+
         public bool IsClientPanelVisible => _isClientTabActive && !_isCodeEntryVisible;
+
         public bool IsEmployeePanelVisible => !_isClientTabActive;
+
         public bool IsCodeEntryVisible
         {
             get => _isCodeEntryVisible;
-            set { _isCodeEntryVisible = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsClientPanelVisible)); }
+            set
+            {
+                _isCodeEntryVisible = value;
+                OnPropertyChanged(nameof(IsCodeEntryVisible));
+                OnPropertyChanged(nameof(IsClientPanelVisible));
+            }
         }
+
         public int ActiveTabIndex
         {
             get => _activeTabIndex;
-            set { _activeTabIndex = value; OnPropertyChanged(); }
+            set
+            {
+                _activeTabIndex = value;
+                OnPropertyChanged(nameof(ActiveTabIndex));
+            }
         }
 
         public ICommand SwitchToClientCommand { get; }
@@ -79,6 +101,7 @@ namespace CarWash3D.ViewModels
         {
             if (_clientService.AuthenticateClient(ClientPhone, ClientCarNumber))
             {
+                _lastAuthenticatedPhone = ClientPhone; // Сохраняем номер телефона для последующей проверки
                 IsCodeEntryVisible = true;
             }
             else
@@ -89,12 +112,21 @@ namespace CarWash3D.ViewModels
 
         private void VerifyCode()
         {
-            if (_clientService.VerifyCode(VerificationCode))
+            if (_clientService.VerifyCode(_lastAuthenticatedPhone, VerificationCode))
             {
-                _navigationService.NavigateTo("CustomerCabinetView");
-                MessageBox.Show("Вход клиента выполнен!");
-                IsCodeEntryVisible = false;
-                VerificationCode = "";
+                var client = _clientService.GetClientByPhoneNumber(_lastAuthenticatedPhone);
+                if (client != null)
+                {
+                    _navigationService.NavigateTo("CustomerCabinetView", client.ID_Клиента);
+                    MessageBox.Show("Вход клиента выполнен!");
+                    IsCodeEntryVisible = false;
+                    VerificationCode = "";
+                    _lastAuthenticatedPhone = null;
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка: клиент не найден после верификации.");
+                }
             }
             else
             {
@@ -115,7 +147,7 @@ namespace CarWash3D.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
