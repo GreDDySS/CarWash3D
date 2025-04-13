@@ -14,6 +14,7 @@ namespace CarWash3D.Models
         public string Отчество { get; set; }
         public string Номер_телефона { get; set; }
         public int ID_Должность { get; set; }
+        public Position position { get; set; }
         public string Пароль { get; set; }
         public string Логин { get; set; }
     }
