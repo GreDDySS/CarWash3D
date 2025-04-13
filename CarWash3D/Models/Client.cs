@@ -14,5 +14,10 @@ namespace CarWash3D.Models
         public string Отчество { get; set; }
         public string Номер_телефона { get; set; }
         public string Номер_машины { get; set; }
+        public List<Review> Reviews { get; set; }
+        public List<Bonus> Bonuses { get; set; }
+        public List<VisitHistory> VisitHistories { get; set; }
+        public List<ServiceOrder> ServiceOrders { get; set; }
+        public List<ProductOrder> ProductOrders { get; set; }
     }
 }
