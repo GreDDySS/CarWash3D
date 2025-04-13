@@ -23,10 +23,15 @@ namespace CarWash3D.Services
             return _clientRepository.AddClient(client);
         }
 
-        public bool VerifyCode(string code)
+        public bool VerifyCode(string phone, string code)
         {
             // Заглушка: статичный код "123456"
             return code == "123456";
+        }
+        public Client GetClientByPhoneNumber(string phone)
+        {
+            var client = _clientRepository.GetClientByPhone(phone);
+            return client;
         }
     }
 }
