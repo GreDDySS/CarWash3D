@@ -28,5 +28,19 @@ namespace CarWash3D.Views
         {
             e.Handled = !char.IsDigit(e.Text, 0);
         }
+
+        private void PhoneValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            var text = textBox.Text + e.Text;
+            e.Handled = !System.Text.RegularExpressions.Regex.IsMatch(text, @"^\+7\s\(\d{0,3}\)\s\d{0,3}-?\d{0,2}-?\d{0,2}$");
+        }
+
+        private void CarNumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            var text = textBox.Text + e.Text;
+            e.Handled = !System.Text.RegularExpressions.Regex.IsMatch(text, @"^[А-ЯA-Z]?\d{0,3}[А-ЯA-Z]{0,2}\d{0,3}$");
+        }
     }
 }

@@ -59,13 +59,13 @@
                 <!-- Панель ввода данных клиента -->
                 <StackPanel Visibility="{Binding IsClientPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="Номер телефона" Style="{StaticResource InputLabel}"/>
-                    <TextBox Text="{Binding ClientPhone, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}"/>
+                    <TextBox Text="{Binding ClientPhone, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}" PreviewTextInput="PhoneValidationTextBox"/>
                     <TextBlock Text="Номер автомобиля" Style="{StaticResource InputLabel}"/>
-                    <TextBox Text="{Binding ClientCarNumber, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}"/>
+                    <TextBox Text="{Binding ClientCarNumber, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}" PreviewTextInput="CarNumberValidationTextBox"/>
                     <Button Content="Войти как клиент" Style="{StaticResource BlueButton}" Command="{Binding ClientLoginCommand}"/>
                     <Button Style="{StaticResource NavLinkText}" Command="{Binding NavigateToRegistrationCommand}" Background="Transparent" BorderThickness="0">
                         <TextBlock>
-                            <Run Text="Еще не зарегистрированы? "/>
+                            <Run Text="Еще не зарегистрированы? "/> 
                             <Run Text="Зарегистрироваться" Foreground="#4169E1"/>
                         </TextBlock>
                     </Button>
@@ -76,11 +76,11 @@
                     <TextBlock Text="Введите код подтверждения" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <TextBlock Text="Мы отправили код из 6 цифр на ваш телефон" FontSize="14" Foreground="#646464" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,0,0,20"/>
                     <TextBox Text="{Binding VerificationCode, UpdateSourceTrigger=PropertyChanged}" 
-                         Style="{StaticResource InputTextBox}" 
-                         MaxLength="6" 
-                         HorizontalAlignment="Center" 
-                         Width="120" 
-                         PreviewTextInput="NumberValidationTextBox"/>
+                             Style="{StaticResource InputTextBox}" 
+                             MaxLength="6" 
+                             HorizontalAlignment="Center" 
+                             Width="120" 
+                             PreviewTextInput="NumberValidationTextBox"/>
                     <Button Content="Подтвердить" Style="{StaticResource BlueButton}" Command="{Binding VerifyCodeCommand}"/>
                 </StackPanel>
 
